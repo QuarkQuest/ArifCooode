@@ -74,9 +74,9 @@ private:
 template<typename INPUT, typename OUTPUT, typename MODEL>
 int encode(INPUT& source, OUTPUT& target, MODEL& model)
 {
-    input_bytes<INPUT> in(source); // создаем поток бинарного ввода 
-    output_bits<OUTPUT> out(target); // создаем поток бинарного вывода
-    OPG_COM<input_bytes<INPUT>, output_bits<OUTPUT>, MODEL> c(in, out, model);// создаем объект компресор и создаем объект с параметрами
+    input_bytes<INPUT> in(source);
+    output_bits<OUTPUT> out(target);
+    OPG_COM<input_bytes<INPUT>, output_bits<OUTPUT>, MODEL> c(in, out, model);
     return c();
 }
 
@@ -99,7 +99,7 @@ public:
             value += m_input.get_bit() ? 1 : 0;
         }
         for (; ; ) {
-            CODE_VALUE range = high - low + 1; // также диапозон
+            CODE_VALUE range = high - low + 1;
             CODE_VALUE scaled_value = ((value - low + 1) * m_model.getCount() - 1) / range;
             int c;
 
