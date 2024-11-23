@@ -13,9 +13,7 @@ template<typename INPUT, typename OUTPUT, typename MODEL> class OPG_COM
     typedef typename MODEL::prob prob;
 public:
     OPG_COM(INPUT& input, OUTPUT& output, MODEL& model)
-        : m_input(input),
-        m_output(output),
-        m_model(model)
+        : m_input(input),m_output(output),m_model(model)
     {
     }
     int operator()()
@@ -54,7 +52,7 @@ public:
                 high += high + 1;
                 
             }
-            if (c == 256) //256 is the special EOF code
+            if (c == 256)
                 break;
         }
         return 0;
@@ -132,7 +130,6 @@ public:
                 high += high + 1;
                 value <<= 1;
                 value += m_input.get_bit() ? 1 : 0;
-            
             }
             
         }
@@ -145,28 +142,28 @@ private:
 };
 
 template<typename INPUT, typename OUTPUT, typename MODEL>
-int decompress(INPUT& source, OUTPUT& target, MODEL& model)
+int decode(INPUT& source, OUTPUT& target, MODEL& model)
 {
     input_bits<INPUT> in(source, MODEL::CODE_VALUE_BITS);
     output_bytes<OUTPUT> out(target);
     OPG_DEC<input_bits<INPUT>, output_bytes<OUTPUT>, MODEL> d(in, out, model);
     return d();
 }
-double SG(const std::string& input_file,const std::string& comp_file)
+double SG(const string& input_file,const string& comp_file)
 {
     double res;
-    std::ifstream in(input_file.c_str(), std::ifstream::binary);
+    ifstream in(input_file.c_str(), ifstream::binary);
     if (!in) {
         cout << "Error name inputfile" << endl;
         exit(-1);
     }
-    std::ifstream comp(comp_file.c_str(), std::ifstream::binary);
+    ifstream comp(comp_file.c_str(), ifstream::binary);
     if (!comp) {
         cout << "Error name comp_file" << endl;
         exit(-2);
     }
-    in.seekg(0, std::ios::end);
-    comp.seekg(0, std::ios::end);
+    in.seekg(0, ios::end);
+    comp.seekg(0, ios::end);
     auto in_length = in.tellg();
     auto comp_length = comp.tellg();
     if (static_cast<long long>(in_length) == 0)
@@ -190,8 +187,8 @@ int main() {
     cout << "OutputDecode: ";
     cin >> filenameOutputDecode;
     
-    ifstream input(filename, std::ifstream::binary);
-    ofstream output(filenameOutput, std::ofstream::binary);
+    ifstream input(filename, ifstream::binary);
+    ofstream output(filenameOutput, ofstream::binary);
     Model<> q1;
     q1.dump("cmodel");
 
@@ -206,14 +203,14 @@ int main() {
     cout << "Степень сжатия " << SG(filename, filenameOutput) << endl;
 
     cout << endl;
-    ifstream inputDe(filenameOutput, std::ifstream::binary);
-    ofstream outputDe(filenameOutputDecode, std::ofstream::binary);
+    ifstream inputDe(filenameOutput, ifstream::binary);
+    ofstream outputDe(filenameOutputDecode, ofstream::binary);
     Model<> q2;
-    q2.dump("cmodel");
+    //q2.dump("cmodel");
 
     cout << "decoding " << endl;
     auto t3 = chrono::high_resolution_clock::now();
-    decompress(inputDe, outputDe, q2);
+    decode(inputDe, outputDe, q2);
     auto t4 = chrono::high_resolution_clock::now();
     cout << q2.m_bytesProcessed << endl;
     inputDe.close();
